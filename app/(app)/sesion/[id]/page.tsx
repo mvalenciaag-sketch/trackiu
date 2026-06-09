@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle, Plus, Dumbbell } from "lucide-react";
+import { ArrowLeft, CheckCircle, Plus, Dumbbell, Clock } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type {
@@ -27,6 +27,25 @@ import { OfflineBanner } from "@/components/session/OfflineBanner";
 import { RestTimerBanner } from "@/components/session/RestTimerBanner";
 
 const DEFAULT_REST_SECONDS = 90;
+
+function formatElapsed(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function useElapsedTimer(startedAt: string | null) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!startedAt) return;
+    const start = new Date(startedAt).getTime();
+    const tick = () => setElapsed(Math.floor((Date.now() - start) / 1000));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+  return elapsed;
+}
 
 type SessionWithDay = WorkoutSession & {
   routine_days: Pick<RoutineDay, "id" | "name" | "color"> | null;
@@ -80,6 +99,7 @@ export default function SessionPage() {
   const [sessionNotes, setSessionNotes] = useState("");
   const [isSyncing, setIsSyncing] = useState(false);
 
+  const elapsed = useElapsedTimer(session?.started_at ?? null);
   const { sessionId: storeId, sets, init, upsertSet, removeSet, clear } =
     useActiveSession();
   const { start: startTimer } = useRestTimer();
@@ -396,10 +416,13 @@ export default function SessionPage() {
   const dayName = session.routine_days?.name ?? "Sesión libre";
   const dayColor = session.routine_days?.color ?? "#6366f1";
 
+  const totalSets = sets.length;
+  const progressPct = totalSets > 0 ? completedCount / totalSets : 0;
+
   return (
     <div className="flex flex-col min-h-full pb-28">
-      {/* Header */}
-      <div className="px-4 pt-6 pb-3 flex items-center gap-3">
+      {/* ── Session header ───────────────────────────────────────────── */}
+      <div className="flex items-center gap-3 px-4 pt-2 pb-3.5">
         <Link
           href="/calendario"
           className="w-9 h-9 flex items-center justify-center rounded-full bg-surface-2 text-muted shrink-0"
@@ -407,17 +430,47 @@ export default function SessionPage() {
         >
           <ArrowLeft size={17} />
         </Link>
-        {!isAdHoc && (
+
+        {/* Animated dot + title + meta */}
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          {/* Pulsing dot */}
           <span
-            className="w-3 h-3 rounded-full shrink-0"
-            style={{ backgroundColor: dayColor }}
+            className="w-[9px] h-[9px] rounded-full shrink-0 animate-pulse"
+            style={{
+              backgroundColor: dayColor,
+              boxShadow: `0 0 0 4px color-mix(in oklch, ${dayColor}, transparent 78%)`,
+            }}
           />
-        )}
-        <h1 className="flex-1 text-lg font-bold min-w-0 truncate">{dayName}</h1>
-        <Button size="sm" onClick={() => setShowFinishSheet(true)} className="shrink-0 gap-1.5">
-          <CheckCircle size={14} />
+          <div className="min-w-0">
+            <p className="font-display font-semibold text-[18px] text-foreground leading-tight truncate">
+              {dayName}
+            </p>
+            <p className="flex items-center gap-1 text-[12px] text-muted font-medium mt-0.5">
+              <Clock size={12} className="shrink-0" />
+              {formatElapsed(elapsed)}
+              <span className="text-border mx-0.5">·</span>
+              {completedCount}/{totalSets} series
+            </p>
+          </div>
+        </div>
+
+        {/* Terminar */}
+        <button
+          type="button"
+          onClick={() => setShowFinishSheet(true)}
+          className="inline-flex items-center gap-1.5 bg-accent text-on-accent font-display font-semibold text-[14px] px-4 py-[9px] rounded-full shrink-0 active:bg-accent-press transition-colors"
+        >
+          <CheckCircle size={15} />
           Terminar
-        </Button>
+        </button>
+      </div>
+
+      {/* ── Progress bar ─────────────────────────────────────────────── */}
+      <div className="mx-4 mb-4 h-[5px] rounded-full bg-surface-3 overflow-hidden">
+        <div
+          className="h-full bg-accent rounded-full transition-[width] duration-[400ms]"
+          style={{ width: `${progressPct * 100}%` }}
+        />
       </div>
 
       {/* Offline banner */}

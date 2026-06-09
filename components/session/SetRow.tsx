@@ -7,13 +7,6 @@ import type { ActiveSet } from "@/stores/activeSession";
 import { AdvancedSetOptions } from "./AdvancedSetOptions";
 import { cn } from "@/lib/utils";
 
-const TYPE_COLORS: Record<string, string> = {
-  warmup:  "bg-amber-500",
-  working: "bg-accent",
-  drop:    "bg-orange-500",
-  failure: "bg-red-500",
-};
-
 interface SetRowProps {
   set: ActiveSet;
   onUpdate: (updates: Partial<ActiveSet>) => void;
@@ -45,23 +38,24 @@ export function SetRow({ set, onUpdate, onRemove }: SetRowProps) {
   }
 
   return (
-    <div>
-      {/* Main row */}
+    <div className="mb-2">
+      {/* ── Main row (design grid: 34px | 1fr | 1fr | 44px) ──────────── */}
       <div
-        className={cn(
-          "flex items-center gap-2 px-3 py-2 transition-opacity",
-          set.isCompleted && "opacity-50"
-        )}
+        className="grid items-center gap-2"
+        style={{ gridTemplateColumns: "34px 1fr 1fr 44px" }}
       >
-        {/* Set number + type dot */}
-        <div className="flex items-center gap-1.5 shrink-0 w-7">
+        {/* Set number pill */}
+        <div className="flex items-center justify-center">
           <span
             className={cn(
-              "w-2 h-2 rounded-full shrink-0",
-              TYPE_COLORS[set.setType] ?? "bg-accent"
+              "w-6 h-6 rounded-lg font-display font-semibold text-[13px] flex items-center justify-center",
+              set.isCompleted
+                ? "bg-accent-soft text-accent-soft-ink"
+                : "bg-surface-3 text-foreground-2"
             )}
-          />
-          <span className="text-xs text-muted tabular-nums">{set.setNumber}</span>
+          >
+            {set.setNumber}
+          </span>
         </div>
 
         {/* Weight input */}
@@ -74,15 +68,14 @@ export function SetRow({ set, onUpdate, onRemove }: SetRowProps) {
           placeholder="0"
           aria-label="Peso (kg)"
           className={cn(
-            "flex-1 min-w-0 h-11 rounded-xl text-center text-base font-semibold",
+            "h-[42px] w-full rounded-xl text-center font-display text-base font-semibold",
             "bg-surface-2 border border-border",
             "placeholder:text-muted text-foreground",
-            "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
-            "[appearance:textfield] transition-colors"
+            "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent focus:bg-surface",
+            "[appearance:textfield] transition-colors",
+            set.isCompleted && "opacity-70"
           )}
         />
-
-        <span className="text-xs text-muted shrink-0">×</span>
 
         {/* Reps input */}
         <input
@@ -94,45 +87,61 @@ export function SetRow({ set, onUpdate, onRemove }: SetRowProps) {
           placeholder="0"
           aria-label="Repeticiones"
           className={cn(
-            "w-14 h-11 rounded-xl text-center text-base font-semibold",
+            "h-[42px] w-full rounded-xl text-center font-display text-base font-semibold",
             "bg-surface-2 border border-border",
             "placeholder:text-muted text-foreground",
-            "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
-            "[appearance:textfield] transition-colors"
+            "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent focus:bg-surface",
+            "[appearance:textfield] transition-colors",
+            set.isCompleted && "opacity-70"
           )}
         />
 
-        {/* Check button */}
-        <button
-          onClick={() => onUpdate({ isCompleted: !set.isCompleted })}
-          aria-label={set.isCompleted ? "Marcar como incompleta" : "Marcar como completada"}
-          className={cn(
-            "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all",
-            set.isCompleted
-              ? "bg-green-500/20 border border-green-500/40 text-green-400"
-              : "bg-surface-2 border border-border text-muted"
-          )}
-        >
-          <Check size={16} strokeWidth={2.5} />
-        </button>
+        {/* Check button — outer wrapper is 44px wide */}
+        <div className="flex items-center gap-1 justify-end">
+          <button
+            onClick={() => onUpdate({ isCompleted: !set.isCompleted })}
+            aria-label={set.isCompleted ? "Marcar como incompleta" : "Marcar como completada"}
+            className={cn(
+              "h-[42px] flex-1 rounded-xl flex items-center justify-center shrink-0 transition-all",
+              set.isCompleted
+                ? "bg-accent border-accent text-on-accent"
+                : "bg-surface-3 border border-border text-muted"
+            )}
+          >
+            <Check size={16} strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
 
-        {/* Expand / remove toggle */}
+      {/* Expand/collapse advanced options */}
+      <div className="flex items-center justify-between mt-0.5">
         <button
           onClick={() => setExpanded((v) => !v)}
           aria-label="Opciones avanzadas"
           className={cn(
-            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-muted transition-colors",
-            expanded ? "bg-surface-2 text-foreground" : "active:bg-surface-2"
+            "flex items-center gap-1 text-[11px] text-muted py-0.5 px-0.5 active:opacity-70 transition-opacity",
+            expanded && "text-accent"
           )}
         >
           <ChevronDown
-            size={15}
+            size={12}
             className={cn(
               "transition-transform duration-200",
               expanded && "rotate-180"
             )}
           />
+          {expanded ? "Menos" : "Opciones"}
         </button>
+
+        {expanded && (
+          <button
+            onClick={onRemove}
+            className="flex items-center gap-1 text-[11px] text-red-400 py-0.5 px-0.5"
+          >
+            <X size={11} />
+            Eliminar
+          </button>
+        )}
       </div>
 
       {/* Advanced options (collapsible) */}
@@ -142,7 +151,6 @@ export function SetRow({ set, onUpdate, onRemove }: SetRowProps) {
             set={set}
             onUpdate={(updates) => {
               onUpdate(updates);
-              // Keep local strings in sync with steppers
               if (updates.weightKg !== undefined) {
                 setWeightStr(updates.weightKg != null ? String(updates.weightKg) : "");
               }
@@ -151,21 +159,6 @@ export function SetRow({ set, onUpdate, onRemove }: SetRowProps) {
               }
             }}
           />
-        )}
-      </AnimatePresence>
-
-      {/* Remove button when expanded */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <div className="px-3 pb-2">
-            <button
-              onClick={onRemove}
-              className="flex items-center gap-1.5 text-xs text-red-400 py-1"
-            >
-              <X size={12} />
-              Eliminar serie
-            </button>
-          </div>
         )}
       </AnimatePresence>
     </div>
