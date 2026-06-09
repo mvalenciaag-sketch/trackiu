@@ -2,11 +2,13 @@
 
 import { Settings, Flame } from "lucide-react";
 
-// Isolated wordmark — swap for real logo asset when ready
+// Wordmark: "Track" in white, "IU" in lighter orange (design token)
 function Logo() {
   return (
-    <span className="text-xl font-black tracking-tight select-none">
-      Track<span className="text-accent">IU</span>
+    <span
+      className="font-display font-extrabold text-[23px] tracking-[-0.035em] leading-none select-none text-white"
+    >
+      Track<span style={{ color: "#f0a96e" }}>IU</span>
     </span>
   );
 }

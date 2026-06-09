@@ -10,19 +10,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        surface:    "var(--surface)",
-        "surface-2":"var(--surface-2)",
-        frame:      "var(--frame)",
-        border:     "var(--border)",
-        muted:      "var(--muted)",
-        "on-accent":"var(--on-accent)",
+        background:     "var(--background)",
+        frame:          "var(--frame)",
+        foreground:     "var(--foreground)",
+        "foreground-2": "var(--foreground-2)",
+        surface:        "var(--surface)",
+        "surface-2":    "var(--surface-2)",
+        "surface-3":    "var(--surface-3)",
+        border:         "var(--border)",
+        muted:          "var(--muted)",
+        "on-accent":    "var(--on-accent)",
         accent: {
-          DEFAULT: "var(--accent)",
-          soft:    "var(--accent-soft)",
-          strong:  "var(--accent-strong)",
+          DEFAULT:   "var(--accent)",
+          soft:      "var(--accent-soft)",
+          "soft-ink":"var(--accent-soft-ink)",
+          strong:    "var(--accent-strong)",
+          press:     "var(--accent-press)",
         },
+      },
+      fontFamily: {
+        sans:    ["var(--font-manrope)", "system-ui", "sans-serif"],
+        display: ["var(--font-space-grotesk)", "var(--font-manrope)", "sans-serif"],
+        mono:    ["var(--font-space-mono)", "ui-monospace", "monospace"],
       },
       keyframes: {
         "slide-up": {

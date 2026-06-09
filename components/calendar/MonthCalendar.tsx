@@ -55,7 +55,9 @@ function DayCell({
   sessions: SessionWithDay[];
   onClick: () => void;
 }) {
-  const hasSessions = sessions.length > 0;
+  const nonRestSessions = sessions.filter(s => s.status !== "rest");
+  const isRestDay       = sessions.some(s => s.status === "rest");
+  const hasSessions     = sessions.length > 0;
 
   return (
     <motion.button
@@ -82,16 +84,21 @@ function DayCell({
         {day}
       </span>
 
-      {/* Session dots */}
+      {/* Session indicators */}
       {hasSessions && (
         <div className="flex gap-[3px] mt-0.5 flex-wrap justify-center w-8">
-          {sessions.slice(0, 3).map((s) => {
+          {/* Rest day: small moon dot */}
+          {isRestDay && nonRestSessions.length === 0 && (
+            <span className="w-1.5 h-1.5 rounded-full inline-block bg-muted opacity-60" />
+          )}
+          {/* Workout session dots */}
+          {nonRestSessions.slice(0, 3).map((s) => {
             const dotColor =
               s.status === "skipped"
                 ? "var(--surface-2)"
                 : (s.routine_days?.color ?? "var(--accent)");
             const opacity = s.status === "completed" ? 1 : 0.6;
-            const size = s.status === "completed" ? "w-2 h-2" : "w-1.5 h-1.5";
+            const size    = s.status === "completed" ? "w-2 h-2" : "w-1.5 h-1.5";
             return (
               <span
                 key={s.id}
@@ -100,9 +107,9 @@ function DayCell({
               />
             );
           })}
-          {sessions.length > 3 && (
+          {nonRestSessions.length > 3 && (
             <span className="text-[9px] text-muted leading-none self-center">
-              +{sessions.length - 3}
+              +{nonRestSessions.length - 3}
             </span>
           )}
         </div>
@@ -142,6 +149,11 @@ function Legend() {
       <div className="flex items-center gap-1.5">
         <span className="w-1.5 h-1.5 rounded-full bg-surface-2 inline-block border border-border" />
         <span className="text-[11px] text-muted">Saltado</span>
+      </div>
+      {/* Descanso */}
+      <div className="flex items-center gap-1.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-muted opacity-60 inline-block" />
+        <span className="text-[11px] text-muted">Descanso</span>
       </div>
     </div>
   );
