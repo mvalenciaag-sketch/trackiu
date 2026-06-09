@@ -10,7 +10,6 @@ interface BottomSheetProps {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
-  /** Sticky footer rendered outside the scroll area (always visible) */
   footer?: React.ReactNode;
   className?: string;
 }
@@ -40,19 +39,20 @@ export function BottomSheet({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop spans full screen */}
+          {/* Backdrop */}
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 z-50"
+            style={{ background: "rgba(8,6,4,.45)", backdropFilter: "blur(2px)" }}
             onClick={onClose}
             aria-hidden="true"
           />
 
-          {/* Sheet constrained to mobile container */}
+          {/* Sheet — matches design's .sheet */}
           <motion.div
             key="sheet"
             initial={{ y: "100%" }}
@@ -61,45 +61,49 @@ export function BottomSheet({
             transition={{ type: "spring", damping: 30, stiffness: 350 }}
             className={cn(
               "fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50",
-              "bg-surface-2 rounded-t-2xl",
-              "max-h-[92dvh] flex flex-col",
-              "shadow-2xl",
+              "bg-surface max-h-[88dvh] flex flex-col overflow-y-auto",
               className
             )}
+            style={{
+              borderRadius: "26px 26px 0 0",
+              boxShadow: "0 -10px 40px -10px rgba(0,0,0,.4)",
+            }}
             role="dialog"
             aria-modal="true"
           >
-            {/* Drag handle */}
-            <div className="flex items-center justify-center pt-3 pb-1 shrink-0">
+            {/* Grip */}
+            <div className="flex items-center justify-center pt-2 pb-3 shrink-0">
               <div className="w-10 h-1 bg-border rounded-full" />
             </div>
 
             {/* Header */}
             {title && (
-              <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-                <h2 className="text-base font-semibold">{title}</h2>
+              <div className="flex items-center justify-between px-5 pb-[18px] shrink-0">
+                <h2 className="font-display text-[21px] font-semibold text-foreground">{title}</h2>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-surface text-muted"
+                  className="w-[34px] h-[34px] flex items-center justify-center rounded-xl bg-surface-3 text-foreground-2 touch-manipulation"
                   aria-label="Cerrar"
                   type="button"
                 >
-                  <X size={15} />
+                  <X size={18} />
                 </button>
               </div>
             )}
 
             {/* Content */}
-            <div
-              ref={contentRef}
-              className="overflow-y-auto flex-1 overscroll-contain"
-            >
+            <div ref={contentRef} className="flex-1 overscroll-contain">
               {children}
             </div>
 
-            {/* Optional sticky footer (outside scroll, always visible) */}
+            {/* Sticky footer */}
             {footer && (
-              <div className="shrink-0 border-t border-border/50 px-4 py-3">
+              <div
+                className="shrink-0 px-5 pt-2 pb-6 sticky bottom-0"
+                style={{
+                  background: "linear-gradient(transparent, var(--surface) 22%)",
+                }}
+              >
                 {footer}
               </div>
             )}

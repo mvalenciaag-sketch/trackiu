@@ -2,13 +2,10 @@
 
 import { Settings, Flame } from "lucide-react";
 
-// Wordmark: "Track" in white, "IU" in lighter orange (design token)
 function Logo() {
   return (
-    <span
-      className="font-display font-extrabold text-[23px] tracking-[-0.035em] leading-none select-none text-white"
-    >
-      Track<span style={{ color: "#f0a96e" }}>IU</span>
+    <span className="font-sans font-extrabold text-[23px] tracking-[-0.035em] leading-none select-none text-foreground">
+      Track<span style={{ color: "oklch(0.76 0.14 40)" }}>IU</span>
     </span>
   );
 }
@@ -16,38 +13,37 @@ function Logo() {
 export function AppHeader() {
   return (
     <header
-      className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40
-                 bg-background/90 backdrop-blur-md border-b border-border/50"
+      className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40"
+      style={{
+        background: "color-mix(in oklch, var(--surface), transparent 8%)",
+        backdropFilter: "blur(14px)",
+      }}
     >
-      <div className="flex items-center justify-between h-14 px-4">
-        {/* Wordmark */}
+      <div className="flex items-center justify-between px-5 pt-1.5 pb-3">
         <Logo />
 
-        {/* Right cluster */}
-        <div className="flex items-center gap-1">
-          {/* PRO badge — visual placeholder, logic TBD */}
+        <div className="flex items-center gap-2">
+          {/* PRO badge — transparent bg, border only (matches design's .pill-pro) */}
           <span
-            className="h-6 px-2.5 rounded-full border border-accent/40 bg-accent/10
-                       text-accent text-[10px] font-bold tracking-wider
-                       flex items-center select-none"
+            className="font-display text-[11px] font-semibold tracking-[0.08em] text-accent px-[9px] py-[3px] rounded-full select-none"
+            style={{ border: "1.4px solid var(--accent)" }}
           >
             PRO
           </span>
 
-          {/* Streak — placeholder value 0; logic TBD */}
-          <div className="flex items-center gap-0.5 h-9 px-2 rounded-full select-none">
-            <Flame size={16} className="text-accent" fill="var(--accent)" />
-            <span className="text-sm font-bold tabular-nums">0</span>
-          </div>
+          {/* Streak */}
+          <span className="inline-flex items-center gap-1 font-bold text-sm text-foreground-2 select-none px-1">
+            <Flame size={16} className="text-accent" />
+            0
+          </span>
 
-          {/* Settings — placeholder action for now */}
+          {/* Settings */}
           <button
             type="button"
-            className="w-9 h-9 flex items-center justify-center rounded-full
-                       text-muted active:bg-surface-2 transition-colors touch-manipulation"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-foreground-2 active:bg-surface-2 transition-colors touch-manipulation"
             aria-label="Ajustes"
           >
-            <Settings size={20} strokeWidth={1.8} />
+            <Settings size={19} strokeWidth={1.8} />
           </button>
         </div>
       </div>

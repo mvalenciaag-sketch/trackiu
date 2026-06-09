@@ -3,14 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import {
   Calendar, TrendingUp, Plus, Dumbbell, LayoutGrid, User, ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { BottomSheet } from "./BottomSheet";
 
-// ── Nav items ─────────────────────────────────────────────────────────────
+// ── Nav items ─────────────────────────────────────────────────────────────────
 
 const LEFT_NAV = [
   { href: "/calendario", label: "Calendario", Icon: Calendar },
@@ -22,7 +21,7 @@ const RIGHT_NAV = [
   { href: "/perfil",   label: "Perfil",   Icon: User },
 ] as const;
 
-// ── Shared nav item ───────────────────────────────────────────────────────
+// ── Nav item ─────────────────────────────────────────────────────────────────
 
 function NavItem({
   href,
@@ -38,32 +37,16 @@ function NavItem({
   return (
     <Link
       href={href}
-      className="flex-1 flex flex-col items-center justify-center h-full relative touch-manipulation"
+      className="flex-1 flex flex-col items-center justify-center gap-1 h-full touch-manipulation transition-colors"
+      style={{ color: isActive ? "var(--accent)" : "var(--muted)" }}
     >
-      <motion.div
-        whileTap={{ scale: 0.82 }}
-        transition={{ duration: 0.1 }}
-        className={cn(
-          "flex flex-col items-center gap-0.5 px-2",
-          isActive ? "text-accent" : "text-muted"
-        )}
-      >
-        <Icon size={22} strokeWidth={isActive ? 2.5 : 1.8} />
-        <span className="text-[10px] font-medium tracking-wide">{label}</span>
-      </motion.div>
-
-      {isActive && (
-        <motion.div
-          layoutId="nav-active"
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-accent rounded-full"
-          transition={{ type: "spring", damping: 25, stiffness: 400 }}
-        />
-      )}
+      <Icon size={22} strokeWidth={isActive ? 2.2 : 1.9} />
+      <span className="text-[10.5px] font-semibold tracking-[0.01em]">{label}</span>
     </Link>
   );
 }
 
-// ── FAB action row ────────────────────────────────────────────────────────
+// ── FAB action row ────────────────────────────────────────────────────────────
 
 function FabAction({
   icon: Icon,
@@ -80,23 +63,23 @@ function FabAction({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-4 w-full px-4 py-4 bg-surface
-                 rounded-2xl border border-border active:bg-surface-2
-                 transition-colors text-left touch-manipulation"
+      className="flex items-center gap-3.5 w-full px-3.5 py-3.5 bg-surface border border-border
+                 rounded-2xl active:bg-surface-2 transition-colors text-left touch-manipulation"
+      style={{ boxShadow: "var(--shadow)" }}
     >
-      <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
-        <Icon size={20} className="text-accent" />
+      <div className="w-[42px] h-[42px] rounded-xl bg-accent-soft flex items-center justify-center shrink-0">
+        <Icon size={20} className="text-accent-soft-ink" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs text-muted">{subtitle}</p>
+        <p className="text-[14.5px] font-bold text-foreground leading-tight">{title}</p>
+        <p className="text-[12.5px] text-foreground-2">{subtitle}</p>
       </div>
-      <ChevronRight size={16} className="text-muted shrink-0" />
+      <ChevronRight size={18} className="text-muted shrink-0" />
     </button>
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────
+// ── Main component ────────────────────────────────────────────────────────────
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -106,18 +89,22 @@ export function BottomNav() {
 
   function handleAction(href: string) {
     setFabOpen(false);
-    // Small delay so the sheet can animate out before navigating
     setTimeout(() => router.push(href), shouldReduce ? 0 : 200);
   }
 
   return (
     <>
-      {/* ── Nav bar ──────────────────────────────────────────────── */}
+      {/* ── Nav bar ──────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px]
-                   bg-surface border-t border-border z-30 safe-bottom"
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-30"
+        style={{
+          background: "color-mix(in oklch, var(--surface), transparent 8%)",
+          borderTop: "1px solid var(--border)",
+          backdropFilter: "blur(14px)",
+        }}
       >
-        <div className="flex items-stretch h-16">
+        {/* 78px total height, 14px bottom padding (safe area) */}
+        <div className="grid h-[78px] pb-3.5" style={{ gridTemplateColumns: "1fr 1fr 64px 1fr 1fr" }}>
           {/* Left items */}
           {LEFT_NAV.map(({ href, label, Icon }) => (
             <NavItem
@@ -130,28 +117,28 @@ export function BottomNav() {
           ))}
 
           {/* FAB center slot */}
-          <div className="flex-1 flex items-center justify-center relative">
-            <motion.button
+          <div className="flex items-center justify-center">
+            <button
               type="button"
-              whileTap={{ scale: shouldReduce ? 1 : 0.88 }}
-              transition={{ duration: 0.12 }}
               onClick={() => setFabOpen(true)}
               aria-label="Acciones rápidas"
-              className="absolute -top-5 w-[52px] h-[52px] rounded-full
-                         flex items-center justify-center
-                         shadow-lg shadow-accent/35 z-40 touch-manipulation"
+              className="w-[58px] h-[58px] rounded-full flex items-center justify-center touch-manipulation"
               style={{
-                background:
-                  "linear-gradient(160deg, var(--accent), var(--accent-strong))",
+                background: "var(--accent)",
+                transform: "translateY(-16px)",
+                boxShadow: "0 10px 24px -6px oklch(0.64 0.17 40 / .55), 0 0 0 6px var(--background)",
               }}
             >
-              <motion.div
-                animate={{ rotate: fabOpen ? 45 : 0 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
-              >
-                <Plus size={26} className="text-on-accent" strokeWidth={2.5} />
-              </motion.div>
-            </motion.button>
+              <Plus
+                size={26}
+                strokeWidth={2.4}
+                style={{
+                  color: "var(--on-accent)",
+                  transform: fabOpen ? "rotate(45deg)" : "rotate(0deg)",
+                  transition: "transform 0.18s ease-out",
+                }}
+              />
+            </button>
           </div>
 
           {/* Right items */}
@@ -167,13 +154,13 @@ export function BottomNav() {
         </div>
       </nav>
 
-      {/* ── FAB sheet ────────────────────────────────────────────── */}
+      {/* ── FAB sheet ────────────────────────────────────────────────── */}
       <BottomSheet
         isOpen={fabOpen}
         onClose={() => setFabOpen(false)}
         title="Añadir"
       >
-        <div className="px-4 pt-1 pb-4 flex flex-col gap-2.5">
+        <div className="px-5 pt-1 pb-5 flex flex-col gap-2.5">
           <FabAction
             icon={Dumbbell}
             title="Añadir ejercicio"
@@ -183,7 +170,7 @@ export function BottomNav() {
           <FabAction
             icon={LayoutGrid}
             title="Añadir día / rutina"
-            subtitle="Nueva plantilla de entrenamiento"
+            subtitle="Nueva plantilla de entreno"
             onClick={() => handleAction("/dias")}
           />
         </div>

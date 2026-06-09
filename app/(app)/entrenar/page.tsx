@@ -305,26 +305,25 @@ export default function EntrenarPage() {
   return (
     <div className="flex flex-col pb-6 gap-5">
       {/* ── Header ────────────────────────────────────────────────── */}
-      <div className="px-4 pt-6">
-        <p className={cn(
-          "font-display text-[12px] font-semibold tracking-[0.1em] uppercase mb-1",
-          "text-accent"
-        )}>
-          {getDateLabel()}
-        </p>
-        <h1 className="font-display font-bold text-[28px] tracking-[-0.02em] text-foreground leading-tight">
-          Entrenar
-        </h1>
-        <p className="text-[14.5px] text-muted mt-1">
-          {heroDay
-            ? <>Toca <span className="font-bold text-foreground">{heroDay.name}</span> hoy — vamos a por ello.</>
-            : "Empieza creando tu primera rutina."}
-        </p>
+      <div className="px-5 pt-2 pb-0">
+        <div className="py-2 pb-[18px]">
+          <p className="font-display text-[12px] font-semibold tracking-[0.1em] uppercase mb-1.5 text-accent-soft-ink">
+            {getDateLabel()}
+          </p>
+          <h1 className="font-display font-bold text-[30px] tracking-[-0.02em] text-foreground leading-[1.1]">
+            Entrenar
+          </h1>
+          <p className="text-[14.5px] text-foreground-2 mt-[5px]">
+            {heroDay
+              ? <>Toca <span className="font-bold text-foreground">{heroDay.name}</span> hoy — vamos a por ello.</>
+              : "Empieza creando tu primera rutina."}
+          </p>
+        </div>
       </div>
 
       {/* ── Hero card ─────────────────────────────────────────────── */}
       {heroDay ? (
-        <div className="px-4">
+        <div className="px-5">
           <HeroCard
             day={heroDay}
             onStart={() => startWorkout(heroDay.id)}
@@ -333,9 +332,9 @@ export default function EntrenarPage() {
           />
         </div>
       ) : (
-        <div className="px-4 rounded-[20px] border-2 border-dashed border-border
+        <div className="px-5 rounded-[20px] border-2 border-dashed border-border
                         flex flex-col items-center justify-center py-12 gap-3
-                        mx-4 active:bg-surface transition-colors"
+                        mx-5 active:bg-surface transition-colors"
           onClick={() => router.push("/dias")}
         >
           <div className="w-14 h-14 rounded-2xl bg-accent-soft flex items-center justify-center">
@@ -351,7 +350,7 @@ export default function EntrenarPage() {
       {/* ── Routine rail ──────────────────────────────────────────── */}
       {days.length > 0 && (
         <div>
-          <div className="flex items-center justify-between px-4 mb-3">
+          <div className="flex items-center justify-between px-5 mb-3">
             <h3 className="text-[13px] font-bold uppercase tracking-[0.05em] text-muted">
               Mis rutinas
             </h3>
@@ -367,7 +366,7 @@ export default function EntrenarPage() {
           <div
             ref={railRef}
             onScroll={handleRailScroll}
-            className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-1"
+            className="no-scrollbar flex gap-3 overflow-x-auto px-5 pb-1"
             style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
           >
             {days.map(d => (
@@ -404,8 +403,8 @@ export default function EntrenarPage() {
       )}
 
       {/* ── Quick actions ─────────────────────────────────────────── */}
-      <div className="px-4 flex flex-col gap-2.5">
-        <p className="text-[11px] font-bold text-muted uppercase tracking-wider px-0.5">
+      <div className="px-5 flex flex-col gap-2.5">
+        <p className="text-[13px] font-bold text-muted uppercase tracking-[0.05em] mb-0.5">
           Acciones rápidas
         </p>
         <ActionRow

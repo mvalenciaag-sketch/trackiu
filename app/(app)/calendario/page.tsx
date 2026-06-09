@@ -119,8 +119,15 @@ export default function CalendarioPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="px-4 pt-6 pb-2">
-        <h1 className="text-xl font-bold">Calendario</h1>
+      <div className="px-5 pt-2 pb-0">
+        <div className="py-2 pb-[18px]">
+          <h1 className="font-display font-bold text-[30px] tracking-[-0.02em] text-foreground leading-[1.1]">
+            Calendario
+          </h1>
+          <p className="text-[14.5px] text-foreground-2 mt-[5px]">
+            Tu constancia, de un vistazo.
+          </p>
+        </div>
       </div>
 
       <MonthCalendar

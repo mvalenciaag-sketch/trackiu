@@ -9,9 +9,11 @@ export default function AppLayout({
   return (
     <div className="w-full max-w-[480px] mx-auto min-h-dvh bg-background flex flex-col relative">
       <AppHeader />
-      {/* pt-14: clears the fixed header (h-14 = 56px)
-          pb-24: clears the fixed nav bar (h-16 = 64px) + FAB overhang */}
-      <main className="flex-1 pt-14 pb-24">
+      {/*
+        pt-[52px]: clears the fixed header (px-5 pt-1.5 pb-3 with 23px logo ≈ 52px)
+        pb-[78px]: clears the fixed nav bar (64px content + 14px safe padding)
+      */}
+      <main className="flex-1 pt-[52px] pb-[96px]">
         {children}
       </main>
       <BottomNav />
