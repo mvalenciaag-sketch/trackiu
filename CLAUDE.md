@@ -24,6 +24,7 @@ El desarrollo es **incremental por fases**. Se irán añadiendo prompts posterio
 
 ## 2. Stack tecnológico
 
+- **Repositorio**: https://github.com/mvalenciaag-sketch/trackiu
 - **Framework**: Next.js 14 (App Router) + TypeScript (strict).
 - **UI**: Tailwind CSS + Framer Motion (animaciones y microinteracciones).
 - **Backend / DB**: Supabase (Postgres + Auth + RLS + Realtime + Storage).
